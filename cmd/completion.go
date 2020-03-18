@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"regexp"
 
 	"github.com/spf13/cobra"
 )
@@ -22,14 +23,14 @@ https://docs.openfaas.com/cli/completion/`,
 	}
 
 	completionCmd.Flags().StringVar(&shell, "shell", "", "Outputs shell completion, must be bash or zsh")
-	completionCmd.MarkFlagRequired("shell")
 
 	return completionCmd
 }
 
 func runCompletion(cmd *cobra.Command, args []string) (err error) {
 	if shell == "" {
-		return fmt.Errorf("--shell is required and must be bash or zsh")
+		re := regexp.MustCompile(`.*/`)
+		shell = re.ReplaceAllString(os.Getenv("SHELL"), "")
 	}
 
 	switch shell {
