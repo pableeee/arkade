@@ -1,6 +1,3 @@
-// Copyright (c) arkade author(s) 2020. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
 package main
 
 import (
@@ -16,6 +13,7 @@ func main() {
 	cmdInstall := cmd.MakeInstall()
 	cmdInfo := cmd.MakeInfo()
 	cmdUpdate := cmd.MakeUpdate()
+	cmdCompletion := cmd.MakeCompletion()
 
 	printarkadeASCIIArt := cmd.PrintArkadeASCIIArt
 
@@ -31,6 +29,7 @@ func main() {
 	rootCmd.AddCommand(cmdVersion)
 	rootCmd.AddCommand(cmdInfo)
 	rootCmd.AddCommand(cmdUpdate)
+	rootCmd.AddCommand(cmdCompletion)
 
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
