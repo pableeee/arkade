@@ -16,9 +16,17 @@ func MakeCompletion() *cobra.Command {
 		Use:   "completion SHELL",
 		Short: "Generates shell completion",
 		Long: `Generates shell auto completion for Bash or ZSH.
-		
-Please follow the instructions in the link below to activate the shell auto completion in your environment:
-https://docs.openfaas.com/cli/completion/`,
+
+You can enable completion using the following:
+source <(arkade completion)
+
+To configure your bash/zsh shell to load completions for each session, add to your bashrc/zshrc
+
+# ~/.bashrc or ~/.zshrc
+source <(arkade completion)
+`,
+		Example: `  arkade completion --shell bash
+  arkade completion --shell zsh`,
 		RunE: runCompletion,
 	}
 
