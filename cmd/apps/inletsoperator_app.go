@@ -5,6 +5,7 @@ package apps
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -28,6 +29,7 @@ func MakeInstallInletsOperator() *cobra.Command {
 
 	inletsOperator.Flags().StringP("namespace", "n", "default", "The namespace used for installation")
 	inletsOperator.Flags().StringP("license", "l", "", "The license key if using inlets-pro")
+	inletsOperator.Flags().StringP("license-file", "f", "", "Text file containing license key, used for inlets-pro")
 	inletsOperator.Flags().StringP("provider", "p", "digitalocean", "Your infrastructure provider - 'packet', 'digitalocean', 'scaleway', 'gce' or 'ec2'")
 	inletsOperator.Flags().StringP("zone", "z", "us-central1-a", "The zone to provision the exit node (Used by GCE")
 	inletsOperator.Flags().String("project-id", "", "Project ID to be used (for GCE and Packet)")
@@ -161,6 +163,15 @@ func MakeInstallInletsOperator() *cobra.Command {
 			overrides["inletsProLicense"] = val
 		}
 
+		if licenseFile, _ := command.Flags().GetString("license-file"); len(licenseFile) > 0 {
+			licenseKey, err := ioutil.ReadFile(licenseFile)
+			if err != nil {
+				return err
+			}
+
+			overrides["inletsProLicense"] = strings.TrimSpace(string(licenseKey))
+		}
+
 		if val, _ := command.Flags().GetString("pro-client-image"); len(val) > 0 {
 			overrides["proClientImage"] = val
 		}
@@ -280,7 +291,17 @@ const InletsOperatorInfoMsg = `# The default configuration is for DigitalOcean a
 # stored as "inlets-access-key" in the "default" namespace.
 
 # To get your first Public IP run the following:
+
+# K8s 1.17
 kubectl run nginx-1 --image=nginx --port=80 --restart=Always
+
+# K8s 1.18 and higher:
+
+kubectl apply -f \
+ https://raw.githubusercontent.com/inlets/inlets-operator/master/contrib/nginx-sample-deployment.yaml
+
+# Then expose the Deployment as a LoadBalancer:
+
 kubectl expose deployment nginx-1 --port=80 --type=LoadBalancer
 
 # Find your IP in the "EXTERNAL-IP" field, watch for "<pending>" to 

@@ -68,6 +68,9 @@ arkade info --help`,
 		case "kafka-connector":
 			fmt.Printf("Info for app: %s\n", appName)
 			fmt.Println(apps.KafkaConnectorInfoMsg)
+		case "kube-state-metrics":
+			fmt.Printf("Info for app: %s\n", appName)
+			fmt.Println(apps.KubeStateMetricsInfoMsg)
 		case "minio":
 			fmt.Printf("Info for app: %s\n", appName)
 			fmt.Println(apps.MinioInfoMsg)
@@ -89,9 +92,21 @@ arkade info --help`,
 		case "traefik2":
 			fmt.Printf("Info for app: %s\n", appName)
 			fmt.Println(apps.Traefik2InfoMsg)
+		case "tekton":
+			fmt.Printf("Info for app: %s\n", appName)
+			fmt.Println(apps.TektonInfoMsg)
 		case "grafana":
 			fmt.Printf("Info for app: %s\n", appName)
 			fmt.Println(apps.GrafanaInfoMsg)
+		case "argocd":
+			fmt.Printf("Info for app: %s\n", appName)
+			fmt.Println(apps.ArgoCDInfoMsg)
+		case "portainer":
+			fmt.Printf("Info for app: %s\n", appName)
+			fmt.Println(apps.PortainerInfoMsg)
+		case "jenkins":
+			fmt.Printf("Info for app: %s\n", appName)
+			fmt.Println(apps.JenkinsInfoMsg)
 		default:
 			return fmt.Errorf("no info available for app: %s", appName)
 		}

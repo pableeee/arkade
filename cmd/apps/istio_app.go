@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"time"
 
 	"github.com/alexellis/arkade/pkg"
 	"github.com/alexellis/arkade/pkg/config"
@@ -16,8 +17,6 @@ import (
 	"github.com/alexellis/arkade/pkg/helm"
 	"github.com/spf13/cobra"
 )
-
-var IntelArch = "amd64"
 
 func MakeInstallIstio() *cobra.Command {
 	var istio = &cobra.Command{
@@ -30,6 +29,7 @@ func MakeInstallIstio() *cobra.Command {
 	istio.Flags().Bool("update-repo", true, "Update the helm repo")
 	istio.Flags().String("namespace", "istio-system", "Namespace for the app")
 	istio.Flags().Bool("init", true, "Run the Istio init to add CRDs etc")
+	istio.Flags().Bool("helm3", true, "Use Helm 3")
 
 	istio.Flags().StringArray("set", []string{},
 		"Use custom flags or override existing flags \n(example --set=prometheus.enabled=false)")
@@ -54,7 +54,7 @@ func MakeInstallIstio() *cobra.Command {
 		fmt.Printf("Node architecture: %q\n", arch)
 
 		if arch != IntelArch {
-			return fmt.Errorf(`only Intel, i.e. PC architecture is supported for this app`)
+			return fmt.Errorf(OnlyIntelArch)
 		}
 
 		userPath, err := config.InitUserDir()
@@ -70,7 +70,7 @@ func MakeInstallIstio() *cobra.Command {
 
 		os.Setenv("HELM_HOME", path.Join(userPath, ".helm"))
 
-		helm3 := true
+		helm3, _ := command.Flags().GetBool("helm3")
 
 		_, err = helm.TryDownloadHelm(userPath, clientArch, clientOS, helm3)
 		if err != nil {
@@ -123,6 +123,18 @@ func MakeInstallIstio() *cobra.Command {
 				return fmt.Errorf("unable to istio-init install chart with helm %s", err)
 			}
 		}
+
+		fmt.Printf("Waiting for Istio init jobs to create CRDs\n")
+
+		_, err = kubectlTask("wait", "-n", "istio-system", "--for=condition=complete", "job", "--all")
+		if err != nil {
+			fmt.Printf("error waiting for init jobs")
+		}
+
+		fmt.Printf("Giving Istio a few moments to propagate its CRDs.\n")
+		time.Sleep(time.Second * 5)
+
+		fmt.Printf("Istio init jobs in completed state or timed-out waiting.\n")
 
 		customFlags, customFlagErr := command.Flags().GetStringArray("set")
 		if customFlagErr != nil {
