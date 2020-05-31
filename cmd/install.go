@@ -51,6 +51,7 @@ command.`,
 	command.AddCommand(apps.MakeInstallLinkerd())
 	command.AddCommand(apps.MakeInstallCronConnector())
 	command.AddCommand(apps.MakeInstallKafkaConnector())
+	command.AddCommand(apps.MakeInstallKubeStateMetrics())
 	command.AddCommand(apps.MakeInstallMinio())
 	command.AddCommand(apps.MakeInstallPostgresql())
 	command.AddCommand(apps.MakeInstallKubernetesDashboard())
@@ -61,6 +62,10 @@ command.`,
 	command.AddCommand(apps.MakeInstallRegistryIngress())
 	command.AddCommand(apps.MakeInstallTraefik2())
 	command.AddCommand(apps.MakeInstallGrafana())
+	command.AddCommand(apps.MakeInstallArgoCD())
+	command.AddCommand(apps.MakeInstallPortainer())
+	command.AddCommand(apps.MakeInstallTekton())
+	command.AddCommand(apps.MakeInstallJenkins())
 
 	command.AddCommand(MakeInfo())
 
@@ -81,6 +86,7 @@ func getApps() []string {
 		"minio",
 		"postgresql",
 		"kubernetes-dashboard",
+		"kube-state-metrics",
 		"istio",
 		"crossplane",
 		"mongodb",
@@ -88,5 +94,7 @@ func getApps() []string {
 		"docker-registry-ingress",
 		"traefik2",
 		"grafana",
+		"tekton",
+		"jenkins",
 	}
 }
